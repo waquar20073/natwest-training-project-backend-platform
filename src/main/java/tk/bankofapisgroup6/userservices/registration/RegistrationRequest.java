@@ -1,4 +1,4 @@
-package tk.bankofapisgroup6.userservices.registeration;
+package tk.bankofapisgroup6.userservices.registration;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

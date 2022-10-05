@@ -28,6 +28,7 @@ public class Account implements UserDetails {
 	private long id;
 	private String firstName;
 	private String lastName;
+	private String username;
 	private String email;
 	private String password;
 	// private String date_created;
@@ -36,10 +37,12 @@ public class Account implements UserDetails {
 
 	public Account(String firstName,
               String lastName,
+              String username,
               String email,
               String password) {
 	   this.firstName = firstName;
 	   this.lastName = lastName;
+	   this.username = username;
 	   this.email = email;
 	   this.password = password;
 	}
@@ -53,11 +56,6 @@ public class Account implements UserDetails {
 	@Override
 	public String getPassword() {
 		return password;
-	}
-
-	@Override
-	public String getUsername() {
-		return email;
 	}
 
 	public String getFirstName() {

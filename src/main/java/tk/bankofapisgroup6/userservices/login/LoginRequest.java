@@ -1,4 +1,4 @@
-package tk.bankofapisgroup6.userservices.registration;
+package tk.bankofapisgroup6.userservices.login;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -9,11 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class RegistrationRequest {
-	private String firstName;
-	private String lastName;
+public class LoginRequest {
 	private String username;
-	private String email;
 	private String password;
-	
 }

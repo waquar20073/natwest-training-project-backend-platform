@@ -16,33 +16,38 @@ import tk.bankofapisgroup6.userservices.registration.token.ConfirmationTokenServ
 @Service
 @AllArgsConstructor
 public class AccountService implements UserDetailsService{
-	private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
+	private final static String USER_NOT_FOUND_MSG = "user with username %s not found";
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AccountRepository accountRepository; 
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
-    public UserDetails loadUserByUsername(String email)
+    public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
-        return (UserDetails) accountRepository.findByEmail(email)
+        return (UserDetails) accountRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
-                                String.format(USER_NOT_FOUND_MSG, email)));
+                                String.format(USER_NOT_FOUND_MSG, username)));
     }
 
     public String signUpUser(Account account) {
         boolean userExists = accountRepository
                 .findByEmail(account.getEmail())
                 .isPresent();
-
         if (userExists) {
             // TODO check of attributes are the same and
             // TODO if email not confirmed send confirmation email.
-
             throw new IllegalStateException("email already taken");
         }
-
+        
+        boolean usernameExists = accountRepository
+                .findByUsername(account.getUsername())
+                .isPresent();
+        if (usernameExists) {
+            throw new IllegalStateException("username already taken");
+        }
+        
         String encodedPassword = bCryptPasswordEncoder
                 .encode(account.getPassword());
 
@@ -58,13 +63,31 @@ public class AccountService implements UserDetailsService{
                 LocalDateTime.now().plusMinutes(15),
                 account
         );
-
-        confirmationTokenService.saveConfirmationToken(
-                confirmationToken);
-
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
         return token;
     }
 
+    public String loginUser(String username, String password) {
+    	boolean usernameExists = accountRepository
+                .findByUsername(username)
+                .isPresent();
+        if (!usernameExists) {
+            throw new IllegalStateException("username not registered");
+        }
+        
+        // todo: check if account enabled
+        
+        Account user = accountRepository.findByUsername(username).get();
+        if(! user.isEnabled()) {
+        	throw new IllegalStateException("account not enabled yet");
+        }
+        if(bCryptPasswordEncoder.matches(password,user.getPassword())) {
+        	/** credentials match */
+        	return "authenticated";			
+        }
+    	return "authentication failed";
+    }
+    
     public int enableAppUser(String email) {
         return accountRepository.enableAccount(email);
     }

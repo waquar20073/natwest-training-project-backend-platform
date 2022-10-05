@@ -62,8 +62,6 @@ public class AccountService implements UserDetailsService{
         confirmationTokenService.saveConfirmationToken(
                 confirmationToken);
 
-//        TODO: SEND EMAIL
-
         return token;
     }
 

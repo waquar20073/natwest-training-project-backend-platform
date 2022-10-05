@@ -31,8 +31,8 @@ public class Account implements UserDetails {
 	private String email;
 	private String password;
 	// private String date_created;
-	private boolean enabled;
-	private boolean locked;
+	private boolean enabled=false;
+	private boolean locked=false;
 
 	public Account(String firstName,
               String lastName,

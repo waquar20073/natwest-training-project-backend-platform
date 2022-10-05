@@ -2,6 +2,7 @@ package tk.bankofapisgroup6.userservices.registration;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import tk.bankofapisgroup6.userservices.registration.*;
 
 @RestController
 @RequestMapping(path = "api/v1/registration")

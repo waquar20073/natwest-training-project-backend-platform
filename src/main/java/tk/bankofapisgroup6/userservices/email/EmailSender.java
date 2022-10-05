@@ -1,5 +1,5 @@
 package tk.bankofapisgroup6.userservices.email;
 
-public class EmailSender {
-
+public interface EmailSender {
+	void send(String to, String email);
 }

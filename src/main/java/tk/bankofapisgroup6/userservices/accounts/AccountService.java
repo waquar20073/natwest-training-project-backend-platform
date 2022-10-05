@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
 import tk.bankofapisgroup6.userservices.registration.token.ConfirmationToken;
+import tk.bankofapisgroup6.userservices.registration.token.ConfirmationTokenService;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class AccountService implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
-        return accountRepository.findByEmail(email)
+        return (UserDetails) accountRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
                                 String.format(USER_NOT_FOUND_MSG, email)));

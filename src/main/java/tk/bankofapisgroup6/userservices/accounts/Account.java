@@ -1,7 +1,9 @@
 package tk.bankofapisgroup6.userservices.accounts;
 
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,17 +36,20 @@ public class Account implements UserDetails {
 	// private String date_created;
 	private boolean enabled=false;
 	private boolean locked=false;
+	private String apiKey;
+	private Date dob;
 
-	public Account(String firstName,
-              String lastName,
-              String username,
-              String email,
-              String password) {
-	   this.firstName = firstName;
-	   this.lastName = lastName;
-	   this.username = username;
-	   this.email = email;
-	   this.password = password;
+
+	public Account(String firstName, String lastName, String username, String email, String password, String apiKey,
+				Date dob) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.apiKey = apiKey;
+		this.dob = dob;
 	}
 
 //	@Override

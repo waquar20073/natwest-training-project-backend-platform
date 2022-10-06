@@ -30,6 +30,7 @@ public class AccountService implements UserDetailsService{
                         new UsernameNotFoundException(
                                 String.format(USER_NOT_FOUND_MSG, username)));
     }
+    
 
     public String signUpUser(Account account) {
         boolean userExists = accountRepository

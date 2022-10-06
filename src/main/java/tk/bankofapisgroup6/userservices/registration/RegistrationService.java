@@ -11,6 +11,9 @@ import tk.bankofapisgroup6.userservices.registration.token.ConfirmationTokenServ
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -21,17 +24,38 @@ public class RegistrationService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
 
+    
+    static String getAlphaNumericString(int n)
+    {
+     String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+     StringBuilder sb = new StringBuilder(n);
+    
+     for (int i = 0; i < n; i++) {
+		int index = (int)(AlphaNumericString.length() * Math.random());
+		sb.append(AlphaNumericString.charAt(index));
+     }
+     return sb.toString();
+    }
+    
+    
     public String register(RegistrationRequest request) {
-
-        String token = accountService.signUpUser(
-                new Account(
-                        request.getFirstName(),
-                        request.getLastName(),
-                        request.getUsername(),
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String token = null;
+        try {
+	        token = accountService.signUpUser(
+	                new Account(
+	                        request.getFirstName(),
+	                        request.getLastName(),
+	                        request.getUsername(),
+	                        request.getEmail(),
+	                        request.getPassword(),
+	                        getAlphaNumericString(10),
+	                        formatter.parse(formatter.format(request.getDob()))
+	                )
+	        );
+        }catch(ParseException ex) {
+        	ex.printStackTrace();
+        }
 
         String link = "http://localhost:8085/api/v1/registration/confirm?token=" + token;
         emailSender.send(

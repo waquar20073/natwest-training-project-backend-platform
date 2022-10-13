@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import tk.bankofapisgroup6.userservices.registration.token.ConfirmationToken;
 import tk.bankofapisgroup6.userservices.registration.token.ConfirmationTokenService;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -68,7 +69,8 @@ public class AccountService implements UserDetailsService{
         return token;
     }
 
-    public String loginUser(String username, String password) {
+    public HashMap<String, String> loginUser(String username, String password) {
+        HashMap<String, String> map = new HashMap<>();
     	boolean usernameExists = accountRepository
                 .findByUsername(username)
                 .isPresent();
@@ -84,9 +86,14 @@ public class AccountService implements UserDetailsService{
         }
         if(bCryptPasswordEncoder.matches(password,user.getPassword())) {
         	/** credentials match */
-        	return "authenticated";			
+
+            map.put("status", "authenticated");
+            map.put("accountId", Long.toString(user.getId()));
+        	return map;
         }
-    	return "authentication failed";
+        map.put("status", "authentication failed");
+        map.put("accountId", Long.toString(user.getId()));
+        return map;
     }
     
     public int enableAppUser(String email) {

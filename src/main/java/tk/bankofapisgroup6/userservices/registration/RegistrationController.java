@@ -9,6 +9,7 @@ import tk.bankofapisgroup6.userservices.registration.*;
 
 @RestController
 @RequestMapping(path = "api/v1/registration")
+@CrossOrigin
 @AllArgsConstructor
 public class RegistrationController {
 

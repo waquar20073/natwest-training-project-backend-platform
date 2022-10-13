@@ -76,10 +76,8 @@ public class AccountService implements UserDetailsService{
             throw new IllegalStateException("username not registered");
         }
         
-        // todo: check if account enabled
-        
         Account user = accountRepository.findByUsername(username).get();
-        if(! user.isEnabled()) {
+        if(!user.isEnabled()) {
         	throw new IllegalStateException("account not enabled yet");
         }
         if(bCryptPasswordEncoder.matches(password,user.getPassword())) {

@@ -10,10 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,38 +24,34 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 public class Account implements UserDetails {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String firstName;
 	private String lastName;
 	private String username;
+	private String number;
 	private String email;
 	private String password;
-	// private String date_created;
 	private boolean enabled=false;
 	private boolean locked=false;
-	private String apiKey;
 	private Date dob;
+	@CreationTimestamp
+	private Date timestamp;
 
 
-	public Account(String firstName, String lastName, String username, String email, String password, String apiKey,
+	public Account(String firstName, String lastName, String username, String number, String email, String password,
 				Date dob) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
+		this.number = number;
 		this.email = email;
 		this.password = password;
-		this.apiKey = apiKey;
 		this.dob = dob;
 	}
-
-//	@Override
-//	public Collection<? extends GrantedAuthority> getAuthorities() {
-//		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(appUserRole.name());
-//		return Collections.singletonList(authority);
-//	}
 
 	@Override
 	public String getPassword() {
@@ -93,6 +88,11 @@ public class Account implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public String getUsername() {
 		return null;
 	}
 }

@@ -67,7 +67,9 @@ public class LinkedAccountsController {
 //	        logger.info(entityResponse.getData());
 		    linkedAccountsService.storeAccountLink(ownerUsername, bankName, response.getBody().toString(), "");
 		}catch(Exception e) {
-			response = ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
+			HashMap<String, String> map = new HashMap<>();
+			map.put("token" , "");
+			response = ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(map);
 		}
 	    return response;
 	}

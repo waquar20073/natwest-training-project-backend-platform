@@ -99,13 +99,14 @@ public class AccountService implements UserDetailsService{
         }
         if(bCryptPasswordEncoder.matches(password,user.getPassword())) {
         	/** credentials match */
-
             map.put("status", "authenticated");
             map.put("accountId", Long.toString(user.getId()));
+            map.put("ownerName", username);
         	return map;
         }
         map.put("status", "authentication failed");
         map.put("accountId", Long.toString(user.getId()));
+        map.put("ownerName", username);
         return map;
     }
     

@@ -35,7 +35,7 @@ public class JwtUtil {
     
     public String generateToken(Account account) {
     	Map<String, Object> claims = new HashMap<>();
-    	return doGenerateToken(claims,String.valueOf(account.getAccountId()));
+    	return doGenerateToken(claims,String.valueOf(account.getId()));
     }
     
 
@@ -47,7 +47,7 @@ public class JwtUtil {
     
     public boolean validateToken(String token, Account userDetails) {
     	final long accountId = getIdFromToken(token);
-    	return (accountId==userDetails.getAccountId() && !isTokenExpired(token));
+    	return (accountId==userDetails.getId() && !isTokenExpired(token));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

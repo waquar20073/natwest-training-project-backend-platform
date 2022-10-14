@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin(origins="*", allowedHeaders = "*")
 @RequestMapping(path="updatepassword")
 public class UpdatePasswordController {
 	@Autowired
@@ -49,12 +51,12 @@ public class UpdatePasswordController {
 		return response;
 	}
 	
-	@GetMapping
+	@GetMapping("otp")
 	public ResponseEntity<String> getOtp(@RequestHeader Map<String, String> headers, @RequestBody Request request){
 		
 		return null;
 	}
-	@PostMapping
+	@PostMapping("reset")
 	public ResponseEntity<String> resetPassword(@RequestHeader Map<String, String> headers,@RequestBody ResetRequest request){
 		if(!validateToken(headers,request.getAccountId())) {
 			throw new IllegalStateException("Token not valid");

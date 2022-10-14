@@ -1,8 +1,10 @@
 package tk.bankofapisgroup6.userservices.accounts;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,8 +20,11 @@ import tk.bankofapisgroup6.userservices.registration.token.ConfirmationTokenServ
 public class AccountService implements UserDetailsService{
 	private final static String USER_NOT_FOUND_MSG = "user with username %s not found";
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
     private final AccountRepository accountRepository; 
+    @Autowired
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -29,6 +34,14 @@ public class AccountService implements UserDetailsService{
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
                                 String.format(USER_NOT_FOUND_MSG, username)));
+    }
+    
+    public UserDetails loadUserById(long accountId)
+            throws UsernameNotFoundException {
+        return (UserDetails) accountRepository.findById(accountId)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                String.format(USER_NOT_FOUND_MSG, accountId)));
     }
     
 
@@ -68,7 +81,8 @@ public class AccountService implements UserDetailsService{
         return token;
     }
 
-    public String loginUser(String username, String password) {
+    public HashMap<String, String> loginUser(String username, String password) {
+        HashMap<String, String> map = new HashMap<>();
     	boolean usernameExists = accountRepository
                 .findByUsername(username)
                 .isPresent();
@@ -76,15 +90,22 @@ public class AccountService implements UserDetailsService{
             throw new IllegalStateException("username not registered");
         }
         
+        // todo: check if account enabled
+        
         Account user = accountRepository.findByUsername(username).get();
-        if(!user.isEnabled()) {
+        if(! user.isEnabled()) {
         	throw new IllegalStateException("account not enabled yet");
         }
         if(bCryptPasswordEncoder.matches(password,user.getPassword())) {
         	/** credentials match */
-        	return "authenticated";			
+
+            map.put("status", "authenticated");
+            map.put("accountId", Long.toString(user.getId()));
+        	return map;
         }
-    	return "authentication failed";
+        map.put("status", "authentication failed");
+        map.put("accountId", Long.toString(user.getId()));
+        return map;
     }
     
     public int enableAppUser(String email) {

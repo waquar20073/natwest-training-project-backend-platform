@@ -12,7 +12,7 @@ import tk.bankofapisgroup6.userservices.registration.token.ConfirmationToken;
 
 public interface UpdatePasswordRepository extends JpaRepository<Otp, Long>{
 
-    Optional<ConfirmationToken> findByToken(String token);
+    Optional<Otp> findByToken(String token);
 
     @Transactional
     @Modifying

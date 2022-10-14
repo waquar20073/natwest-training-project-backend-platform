@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import tk.bankofapisgroup6.userservices.accounts.Account;
 import tk.bankofapisgroup6.userservices.accounts.AccountRepository;
-import tk.bankofapisgroup6.userservices.registration.token.ConfirmationToken;
-import tk.bankofapisgroup6.userservices.registration.token.ConfirmationTokenRepository;
 
 @AllArgsConstructor
 @Service
@@ -21,10 +19,10 @@ public class UpdatePasswordService {
 	private final UpdatePasswordRepository updatePasswordRepository;
 	@Autowired
 	private final AccountRepository accountRepository;
-	private static final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public String updatePassword(long accountId, String oldPassword, String newPassword) {
 		// TODO: validate password
+		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 		Optional<Account> optional = accountRepository.findById(accountId);
         if (!optional.isPresent()) {
             throw new IllegalStateException("Account does not exists");
@@ -72,7 +70,7 @@ public class UpdatePasswordService {
         return "confirmed";
     }
 	
-    public void saveConfirmationToken(ConfirmationToken token) {
+    public void saveConfirmationToken(Otp token) {
     	updatePasswordRepository.save(token);
     }
 

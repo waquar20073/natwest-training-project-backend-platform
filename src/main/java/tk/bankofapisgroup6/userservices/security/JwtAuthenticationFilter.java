@@ -20,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import lombok.AllArgsConstructor;
 import tk.bankofapisgroup6.userservices.accounts.Account;
 import tk.bankofapisgroup6.userservices.accounts.AccountService;
+import tk.bankofapisgroup6.userservices.registration.RegistrationController;
 import tk.bankofapisgroup6.userservices.util.JwtUtil;
 
 @Component
@@ -30,17 +31,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	private JwtUtil jwtutil;
 	@Autowired
 	private AccountService accountService;
-	
+	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+		
 		//get header
-		String requestTokenHeader = request.getHeader("Authorization");
-		long accountId=0;
+		String requestTokenHeader = request.getHeader("authorization");
 		String jwtToken=null;
-		Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 		//check format
-		if(requestTokenHeader!=null && requestTokenHeader.startsWith("Bearer ")) {
+		if(requestTokenHeader!=null && !requestTokenHeader.equals("Bearer undefined") && requestTokenHeader.startsWith("Bearer ")) {
+			long accountId=0;
 			jwtToken=requestTokenHeader.substring(7);
 			try {
 				accountId = jwtutil.getIdFromToken(jwtToken);

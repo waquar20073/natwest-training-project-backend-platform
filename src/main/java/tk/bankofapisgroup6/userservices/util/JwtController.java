@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +17,9 @@ import tk.bankofapisgroup6.userservices.accounts.AccountService;
 
 @RequestMapping(path="api/v1/jwt")
 @AllArgsConstructor
+@CrossOrigin(origins="*", allowedHeaders = "*")
 @RestController
 public class JwtController {
-	@Autowired
-	private AuthenticationManager authenticationManager;
 	@Autowired
 	private AccountService accountService;
 	@Autowired
@@ -34,7 +30,8 @@ public class JwtController {
 	public ResponseEntity<?> generateToken(@RequestBody JwtREquest jwtrequest){
 		Account account = null;
 		try {
-			account = accountService.loginUser(jwtrequest.getUsername(), jwtrequest.getPassword());
+			long accountId = Long.parseLong(accountService.loginUser(jwtrequest.getUsername(), jwtrequest.getPassword()).get("accoundId"));
+			account = (Account)accountService.loadUserById(accountId);
 		}catch(Exception ex) {
 			ex.printStackTrace();
 			throw new IllegalStateException("Invalid Credentials");

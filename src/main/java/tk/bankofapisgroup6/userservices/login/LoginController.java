@@ -18,7 +18,6 @@ import lombok.AllArgsConstructor;
 @CrossOrigin(origins="*", allowedHeaders = "*")
 @RequestMapping(path = "api/v1/login")
 @AllArgsConstructor
-@CrossOrigin
 public class LoginController {
 	
 	private LoginService loginService;

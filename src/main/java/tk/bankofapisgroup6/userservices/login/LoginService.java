@@ -1,5 +1,7 @@
 package tk.bankofapisgroup6.userservices.login;
 
+import java.util.HashMap;
+
 import org.springframework.stereotype.Service;
 import java.util.*;
 

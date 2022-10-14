@@ -36,4 +36,8 @@
 	mvn clean install
 	mvn spring-boot:run
 	```
-
+4) After running the application, tables would be created, insert following rows in the database.    
+	```
+	insert into linked_banks(bankname,img,server_address) values("State Bank of India","SBI-logo.svg.png","localhost:5051");
+	```
+5) 

@@ -19,4 +19,12 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("UPDATE Account a " +
             "SET a.enabled = TRUE WHERE a.email = ?1")
     int enableAccount(String email);
+    
+    @Transactional
+    @Modifying
+    @Query("UPDATE Account a " +
+            "SET a.password = ?2 WHERE a.id = ?1")
+    int updatePassword(long accountId, String password);
+    
+    
 }

@@ -1,8 +1,10 @@
 package tk.bankofapisgroup6.userservices.accounts;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,8 +21,11 @@ import java.util.*;
 public class AccountService implements UserDetailsService{
 	private final static String USER_NOT_FOUND_MSG = "user with username %s not found";
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
     private final AccountRepository accountRepository; 
+    @Autowired
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -30,6 +35,14 @@ public class AccountService implements UserDetailsService{
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
                                 String.format(USER_NOT_FOUND_MSG, username)));
+    }
+    
+    public UserDetails loadUserById(long accountId)
+            throws UsernameNotFoundException {
+        return (UserDetails) accountRepository.findById(accountId)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                String.format(USER_NOT_FOUND_MSG, accountId)));
     }
     
 

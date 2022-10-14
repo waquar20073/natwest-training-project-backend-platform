@@ -1,74 +1,57 @@
-package tk.bankofapisgroup6.userservices.registration;
+package tk.bankofapisgroup6.userservices.updatepassword;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
 
-import lombok.AllArgsConstructor;
-import tk.bankofapisgroup6.userservices.accounts.Account;
-import tk.bankofapisgroup6.userservices.accounts.AccountService;
-import tk.bankofapisgroup6.userservices.email.EmailSender;
-import tk.bankofapisgroup6.userservices.registration.token.ConfirmationToken;
-import tk.bankofapisgroup6.userservices.registration.token.ConfirmationTokenService;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import tk.bankofapisgroup6.userservices.accounts.Account;
+import tk.bankofapisgroup6.userservices.accounts.AccountRepository;
 
-@Service
 @AllArgsConstructor
-public class RegistrationService {
-
-	private final AccountService accountService;
-    private final ConfirmationTokenService confirmationTokenService;
-    private final EmailSender emailSender;
-
-    
-    static String getAlphaNumericString(int n)
-    {
-     String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
-     StringBuilder sb = new StringBuilder(n);
-    
-     for (int i = 0; i < n; i++) {
-		int index = (int)(AlphaNumericString.length() * Math.random());
-		sb.append(AlphaNumericString.charAt(index));
-     }
-     return sb.toString();
-    }
-    
-    
-    public String register(RegistrationRequest request) {
-    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String token = null;
-        try {
-	        token = accountService.signUpUser(
-	                new Account(
-	                        request.getFirstName(),
-	                        request.getLastName(),
-	                        request.getUsername(),
-	                        request.getNumber(),
-	                        request.getEmail(),
-	                        request.getPassword(),
-	                        formatter.parse(formatter.format(request.getDob()))
-	                )
-	        );
-        }catch(ParseException ex) {
-        	ex.printStackTrace();
+@Service
+public class UpdatePasswordService {
+	@Autowired
+	private final UpdatePasswordRepository updatePasswordRepository;
+	@Autowired
+	private final AccountRepository accountRepository;
+	
+	public String updatePassword(long accountId, String oldPassword, String newPassword) {
+		// TODO: validate password
+		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+		Optional<Account> optional = accountRepository.findById(accountId);
+        if (!optional.isPresent()) {
+            throw new IllegalStateException("Account does not exists");
         }
+        Account user = optional.get();
+        if(!user.isEnabled()) {
+        	throw new IllegalStateException("Account not enabled yet");
+        }
+        if(bCryptPasswordEncoder.matches(oldPassword,user.getPassword())) {
+        	accountRepository.updatePassword(accountId, newPassword);
+        }
+    	return "old password invalid";
+	}
+	
+	public String resetPassword(long accountId, String password, String otp) {
+		Optional<Account> optional = accountRepository.findById(accountId);
+        if (!optional.isPresent()) {
+            throw new IllegalStateException("Account does not exists");
+        }
+        Account user = optional.get();
+        if(!user.isEnabled()) {
+        	throw new IllegalStateException("Account not enabled yet");
+        }
+		return null;
+	}
 
-        String link = "http://localhost:8085/api/v1/registration/confirm?token=" + token;
-        emailSender.send(
-                request.getEmail(),
-                buildEmail(request.getFirstName(), link));
-
-        return token;
-    }
-
-    @Transactional
+	@Transactional
     public String confirmToken(String token) {
-        ConfirmationToken confirmationToken = confirmationTokenService
-                .getToken(token)
+        Otp confirmationToken = getToken(token)
                 .orElseThrow(() ->
                         new IllegalStateException("token not found"));
 
@@ -82,12 +65,24 @@ public class RegistrationService {
             throw new IllegalStateException("token expired");
         }
 
-        confirmationTokenService.setConfirmedAt(token);
-        accountService.enableAppUser(
-                confirmationToken.getAccount().getEmail());
+        setConfirmedAt(token);
+        
         return "confirmed";
     }
+	
+    public void saveConfirmationToken(Otp token) {
+    	updatePasswordRepository.save(token);
+    }
 
+    public Optional<Otp> getToken(String token) {
+        return updatePasswordRepository.findByToken(token);
+    }
+
+    public int setConfirmedAt(String token) {
+        return updatePasswordRepository.updateConfirmedAt(
+                token, LocalDateTime.now());
+    } 
+    
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +

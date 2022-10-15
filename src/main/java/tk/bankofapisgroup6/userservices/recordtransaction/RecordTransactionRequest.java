@@ -8,14 +8,33 @@ import lombok.Setter;
 import lombok.ToString;
 import tk.bankofapisgroup6.userservices.accounts.Account;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@Entity
 public class RecordTransactionRequest {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	long id;
 	long authorId;
 	long sourceAccountId;
 	String sourceBankName;
+
+	public RecordTransactionRequest(long authorId, long sourceAccountId, String sourceBankName, long destinationAccontId, String destinationBankName, double amount) {
+		this.authorId = authorId;
+		this.sourceAccountId = sourceAccountId;
+		this.sourceBankName = sourceBankName;
+		this.destinationAccontId = destinationAccontId;
+		this.destinationBankName = destinationBankName;
+		this.amount = amount;
+	}
+
 	long destinationAccontId;
 	String destinationBankName;
 	double amount;

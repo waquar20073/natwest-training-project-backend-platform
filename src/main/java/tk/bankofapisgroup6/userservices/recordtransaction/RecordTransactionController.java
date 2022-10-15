@@ -28,10 +28,9 @@ public class RecordTransactionController {
 		try {
 			boolean added = recordTransactionService.recordTransaction(request);
 			response = ResponseEntity.status(HttpStatus.OK).body("Record Added");
-			response = ResponseEntity.status(HttpStatus.OK).body("Record Added");
 		}catch(Exception e) {
 			e.printStackTrace();
-			response = ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Record Added");
+			response = ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Record Updation Failure");
 		}
 		return response;
 	}

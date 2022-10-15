@@ -16,10 +16,9 @@ public class RecordTransactionService {
 	AccountService accountService;
 	
 	public boolean recordTransaction(RecordTransactionRequest request) {
-		Account author = null;
-		author = (Account)accountService.loadUserById(request.getAuthorId());
-		RecordTransaction record = new RecordTransaction(author, request.getSourceAccountId(), request.getSourceBankName(), request.getDestinationAccontId(), request.getDestinationBankName(), request.getAmount());
+
+		RecordTransactionRequest record = new RecordTransactionRequest(request.getAuthorId(), request.getSourceAccountId(), request.getSourceBankName(), request.getDestinationAccontId(), request.getDestinationBankName(), request.getAmount());
 		recordTransactionRepository.save(record);
-		return false;
+		return true;
 	}
 }

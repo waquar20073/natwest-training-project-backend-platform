@@ -15,6 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class LinkedAccountResponse {
 	long id;
+	long bankAccountId;
     String bankname;
     String value;
     String img;

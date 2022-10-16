@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import tk.bankofapisgroup6.userservices.accounts.Account;
 import tk.bankofapisgroup6.userservices.accounts.AccountService;
+import tk.bankofapisgroup6.userservices.util.JwtUtil;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +20,7 @@ public class LinkedAccountsService {
 	private AccountService accountService;
 	private LinkedAccountsRepository linkedAccountsRepository;
 	private LinkedBankRepository linkedBankRepository;
+	private JwtUtil jwtUtil;
 	
 	
 	public LinkedAccount storeAccountLink(String username, String bankName, String accessToken, String refreshToken) {
@@ -59,6 +61,11 @@ public class LinkedAccountsService {
 			}
 			LinkedAccountResponse lar = new LinkedAccountResponse();
 			lar.setId(bank.getId());
+			if(accessToken.length()>0) {
+				lar.setBankAccountId(jwtUtil.getIdFromToken(accessToken.substring(10,accessToken.length()-2)));
+			}else {
+				lar.setBankAccountId(0);
+			}
 			lar.setBankname(bank.getBankname());
 			
 			lar.setImg(bank.getImg());
